@@ -1,30 +1,25 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./index.module.css";
 
-export default function Home() {
-  const [uploadedFile] = useState(null);
-  let loading = false;
+export async function getServerSideProps() {
+  let res = await fetch("http://localhost:3000/api/files", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  let serversideProps = await res.json();
+  console.log(serversideProps);
 
-  async function setLoading(bool) {
-    loading = bool;
-  }
-  
-  async function onLoad() {
-    let res = await fetch("/api/files", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    let allFiles = await res.json();
-    console.log(allFiles);
-
-    return {
-      props: { allFiles },
-    };
+  return {
+    props: { data: serversideProps.data },
   };
+};
 
+export default function Home({ data }) {
+  let [loading, setLoading] = useState(false);
+  
   async function onSearch(event) {
 
   };
@@ -63,15 +58,18 @@ export default function Home() {
     } catch (error) {
       // handle at some point
     }
-    
-  }
+  };
+
+  useEffect(() => {
+    //make api calls and update props section
+  }, []);
 
   return (
     <div className={styles.main}>
       <Head>
           <title>File Explorer</title>
       </Head>
-      <body onLoad={onLoad}>
+      <body>
           <div className={styles.topBar}>
               <input type="text" className={styles.searchBar} onChange={onSearch} placeholder="Search..."/>
               <label className={styles.uploadButton}>
@@ -80,14 +78,15 @@ export default function Home() {
               </label>
           </div>
           <div className={styles.fileExplorer}>
-              <div className={styles.fileIcon}>
+            {data.map((file, index) => (
+              <div key={index}>
+                <h2>{file.title}</h2>
+                <h3>{file.type}</h3>
+                <div className={styles.fileIcon}>
                   <img src="file-icon.png"/>
-                  <p>File1.txt</p>
               </div>
-              <div className={styles.fileIcon}>
-                  <img src="file-icon.png"/>
-                  <p>File2.txt</p>
               </div>
+            ))};
           </div>
       </body>
     </div>
