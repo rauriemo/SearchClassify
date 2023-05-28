@@ -142,13 +142,31 @@ export default function Home({ initialData }) {
               </label>
           </div>
           <div className={styles.fileExplorer}>
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Tags</th>
+            </tr>
+        </thead>
+        <tbody>
             {data.map((file, index) => (
-              <div key={index}>
-                <h2>{file.title}</h2>
-                <h3>{file.type}</h3>
-              </div>
+                <tr key={index}>
+                    <td><input type="checkbox" /></td>
+                    <td><a href={file.url} target="_blank" rel="noopener noreferrer">{file.title}</a></td>
+                    <td className={styles.fileTypeColumn}>{file.type}</td>
+                    <td className={styles.tagContainer}>
+                        {file.tags.map((tag, tagIndex) => (
+                            <span key={tagIndex} className={styles.tagSpan}>{tag} </span>
+                        ))}
+                    </td>
+                </tr>
             ))}
-          </div>
+        </tbody>
+    </table>
+</div>
     </div>
   );
 }

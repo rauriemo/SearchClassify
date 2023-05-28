@@ -8,7 +8,6 @@ const configuration = new Configuration({
 export default async function handler(req, res) {
     console.log("SERVER - generate tags api req body:")
     console.log(req.body);
-    // need to be able to get file content, title and id from req
 
     if (!configuration.apiKey) {
         res.status(500).json({
@@ -33,9 +32,14 @@ export default async function handler(req, res) {
             temperature: 0.1,
             max_tokens: 200
         });
+
+        let str = completion.data.choices[0].text;
+        let strArray = JSON.parse(str);
+
         console.log("SERVER- Tags generated:");
-        console.log(completion.data.choices[0].text);
-        res.status(200).json({ result: completion.data.choices[0].text });
+        console.log(strArray);
+
+        res.status(200).json({ result: strArray });
     } catch(error) {
         // Consider adjusting the error handling logic for your use case
         if (error.response) {

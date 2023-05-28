@@ -1,21 +1,21 @@
 .main {
   font-family: Arial, sans-serif;
-  background-color: black;
-  width: 100vw;
+  background-color: rgb(62, 62, 63);
+  width: 98.5vw;
   height: 100vh;
 }
 
 .topBar {
   display: flex;
   justify-content: space-between;
-  padding: 10px 20px;
-  background-color: #3432c5;
-  border-bottom: 1px solid #ddd;
+  padding: 15px 60px;
+  background-color: #b8b8be;
+  border: 2px solid #48484b;
 }
 
 .searchBar {
   flex-grow: 1;
-  margin-right: 20px;
+  margin-right: 30px;
   padding: 5px;
 }
 
@@ -40,12 +40,40 @@
 }
 
 .fileExplorer {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 20px;
-  height: calc(100vh - 50px);  
-  overflow-y: auto;  
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.10);
   color: white;
+}
+
+.fileExplorer thead {
+  background-color: #d0d2d6;
+  color: #333;
+  text-align: left;
+}
+
+.fileExplorer th,
+.fileExplorer td {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.fileExplorer tbody tr:hover {
+  background-color: #2a2a2b;
+}
+.tagContainer {
+  max-width: 98.5vw;
+}
+
+.tagSpan {
+  background-color: rgb(70,130,180);
+  margin-right: 4px;
+  margin-top: 4px;
+  padding: 5px;
+  font-size: 0.8em;
+  color: #fff;
+  border-radius: 3px;
+  line-height: 2.2;
 }
 
 .fileIcon {
@@ -65,4 +93,11 @@
   text-align: center;
 }
 
+.tags {
+  margin: 4px;
+  margin-top: 4px;
+}
 
+.fileTypeColumn{
+  min-width: 100px;
+}
