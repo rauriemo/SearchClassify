@@ -6,6 +6,7 @@ const configuration = new Configuration({
   const openai = new OpenAIApi(configuration);
 
 export default async function handler(req, res) {
+    console.log("SERVER - generate tags api req body:")
     console.log(req.body);
     // need to be able to get file content, title and id from req
 
@@ -31,6 +32,8 @@ export default async function handler(req, res) {
             prompt: generatePrompt(bodyObject.content, bodyObject.title),
             temperature: 0.6,
         });
+        console.log("SERVER- Tags generated:");
+        console.log(completion.data.choices[0].text);
         res.status(200).json({ result: completion.data.choices[0].text });
     } catch(error) {
         // Consider adjusting the error handling logic for your use case

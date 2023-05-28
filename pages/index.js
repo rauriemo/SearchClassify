@@ -28,31 +28,30 @@ export default function Home({ initialData }) {
 
   async function onUpload(event) {
     event.preventDefault();
-
+    console.log("HERE");
     try {
-      const [tagsResponse, saveFileResponse] = await Promise.all([generateTags(event), saveFile(event)]);
-  
-      console.log("CLIENT - NEW FILE ID:");
-      console.log(saveFileResponse); 
-  
-      console.log("CLIENT - GENERATED TAGS:");
-      console.log(tagsResponse);   
+      const tagsResponse = await generateTags(event);
       
-      const response = await fetch("/api/files", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const newData = await response.json();
-      setData(newData.data);
-    
-  } catch (error) {
+        console.log("CLIENT - GENERATED TAGS:");
+        console.log(tagsResponse);   
+
+        const saveFileResponse = await saveFile(event, tagsResponse);
+        console.log("CLIENT - NEW FILE ID:");
+        console.log(saveFileResponse); 
+        const response = await fetch("/api/files", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const newData = await response.json();
+        setData(newData.data);
+    } catch (error) {
       console.error("CLIENT - An error occurred:", error);
   }
   };
 
-  async function saveFile(event){
+  async function saveFile(event, tags){
     const file = event.target.files[0];
     setLoading(true);
 
@@ -71,7 +70,8 @@ export default function Home({ initialData }) {
           title: file.name,
           content: fileContent,
           type: file.type,
-          size: file.size
+          size: file.size,
+          tags: tags
          }),
       });
       if (response.ok) {
@@ -88,7 +88,6 @@ export default function Home({ initialData }) {
   };
 
   async function generateTags(event){
-
     const textFile = event.target.files[0];
     setLoading(true);
 
@@ -112,6 +111,8 @@ export default function Home({ initialData }) {
     if (response.ok) {
       const res = await response.json();
       setLoading(false);
+      console.log("GENERATE TAGS RESULT:");
+      console.log(res.result);
       return res.result;
     } else {
       throw new Error(`Request failed with status ${response.status}`);
