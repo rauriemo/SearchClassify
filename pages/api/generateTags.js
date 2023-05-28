@@ -30,7 +30,8 @@ export default async function handler(req, res) {
         const completion = await openai.createCompletion({
             model: "text-davinci-003",
             prompt: generatePrompt(bodyObject.content, bodyObject.title),
-            temperature: 0.6,
+            temperature: 0.1,
+            max_tokens: 200
         });
         console.log("SERVER- Tags generated:");
         console.log(completion.data.choices[0].text);
@@ -54,7 +55,7 @@ export default async function handler(req, res) {
 
 function generatePrompt(fileContent, title) {
     if(typeof fileContent === 'string'){
-      return `After the semi-colon I will show you a text file. I want you the Extract Key Words, Key Themes, Title, and other relevant terms that are related to that text. Each term should not exceed 2 to 3 words and the whole list should not exceed 20 terms. As such the 20 terms should be the 20 most relevant terms and should always include the title. Return the terms to me in an array, ordered from most important to least of the terms and the title being first. This is the title: ${title}, This is the text: ${fileContent}`;
+      return `After the semi-colon I will show you a text file. I want you the Extract Key Words, Key Themes, Title, and other relevant terms that are related to that text. Each term should not exceed 2 to 3 words and the array of terms should include 20 terms. The 20 terms should always include the title as one of the terms and should never contain repeated terms. Return the terms to me in an array of strings formatted as such: ["file title", "key term 1", "key term 2",...,"key term 20"]. This is the title: ${title}, This is the text: ${fileContent}`;
     } else {
       console.error("Cannot generate tags for a non text file.")
     }
