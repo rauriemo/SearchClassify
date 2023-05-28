@@ -37,7 +37,7 @@ export default function Home({ data }) {
       console.log(saveFileResponse); 
   
       console.log("TAGS at UPLOAD FX");
-      console.log(tags);
+      console.log(tagsResponse);
     
   } catch (error) {
       console.error("CLIENT - An error occurred:", error);
