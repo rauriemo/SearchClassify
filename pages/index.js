@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import styles from "./index.module.css";
 
 export async function getServerSideProps() {
+  // remember to change address when hosted on some server
   let res = await fetch("http://localhost:3000/api/files", {
     method: "GET",
     headers: {
@@ -26,37 +27,96 @@ export default function Home({ data }) {
 
   async function onUpload(event) {
     event.preventDefault();
-    //save base file to database if new
-    // console.log(event.target.files[0]);
-    console.log(event.target.value);
 
-    saveFile(event);
+    try {
+      const [tagsResponse, saveFileResponse] = await Promise.all([generateTags(event), saveFile(event)]);
 
-    //if audio file convert to temporary text file and save text file with reference to original audio
-
-    // extract tags from text file
-
-    // create new tags if any with new tag IDs
-
-    // create instances of file to tag references
+      let tags = tagsResponse.result;
+  
+      console.log("NEW FILE ID:");
+      console.log(saveFileResponse); 
+  
+      console.log("TAGS at UPLOAD FX");
+      console.log(tags);
+    
+  } catch (error) {
+      console.error("CLIENT - An error occurred:", error);
+  }
   };
 
   async function saveFile(event){
     const file = event.target.files[0];
     setLoading(true);
+
+    let reader = new FileReader();
+
+    let fileContent = await new Promise(( resolve, reject) => {
+      reader.onload = event => resolve(event.target.result);
+      reader.onerror = error => reject(error);
+      reader.readAsText(file);
+    });
+
     try {
       const response = await fetch("/api/files", {
         method: "POST",
         body: JSON.stringify({ 
           title: file.name,
-          content: file,
+          content: fileContent,
           type: file.type,
           size: file.size
          }),
       });
-      setLoading(false);
+      if (response.ok) {
+        setLoading(false);
+        const data = await response.json();
+        console.log("CLIENT - RESPONSE TO SAVE FILE API CALL WITHIN SAVE FILE METHOD:")
+        console.log(data.insertedId);
+        return data.insertedId;
+      }else {
+        setLoading(false);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
     } catch (error) {
       // handle at some point
+    }
+  };
+
+  async function generateTags(event){
+
+    const textFile = event.target.files[0];
+    setLoading(true);
+
+    let reader = new FileReader();
+    let fileContent = await new Promise(( resolve, reject) => {
+      reader.onload = event => resolve(event.target.result);
+      reader.onerror = error => reject(error);
+      reader.readAsText(textFile);
+    });
+    try {
+      const response = await fetch("/api/generateTags", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          content: fileContent,
+          title: textFile.name
+          }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      console.log("CLIENT - GENERATED TAGS:");
+      console.log(data.result);
+      setLoading(false);
+      return data.result;
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+    } catch(error) {
+      // Consider implementing your own error handling logic here
+      console.error(error);
+      alert(error.message);
+      setLoading(false);
     }
   };
 
@@ -69,7 +129,6 @@ export default function Home({ data }) {
       <Head>
           <title>File Explorer</title>
       </Head>
-      <body>
           <div className={styles.topBar}>
               <input type="text" className={styles.searchBar} onChange={onSearch} placeholder="Search..."/>
               <label className={styles.uploadButton}>
@@ -82,13 +141,9 @@ export default function Home({ data }) {
               <div key={index}>
                 <h2>{file.title}</h2>
                 <h3>{file.type}</h3>
-                <div className={styles.fileIcon}>
-                  <img src="file-icon.png"/>
               </div>
-              </div>
-            ))};
+            ))}
           </div>
-      </body>
     </div>
   );
 }
