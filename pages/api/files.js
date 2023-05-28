@@ -8,8 +8,6 @@ export default async function handler(req, res) {
 
   switch (req.method) {
     case "POST":
-      console.log("SERVER - FILE SAVE REQUEST BODY:")
-      console.log(req.body);
       let bodyObject = JSON.parse(req.body);
       let savedFile = await db.collection("files").insertOne(bodyObject);
       console.log(`SERVER - document saved: ${savedFile.acknowledged}`);

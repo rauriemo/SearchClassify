@@ -14,13 +14,14 @@ export async function getServerSideProps() {
   console.log(serversideProps);
 
   return {
-    props: { data: serversideProps.data },
+    props: { initialData: serversideProps.data },
   };
 };
 
-export default function Home({ data }) {
+export default function Home({ initialData }) {
   let [loading, setLoading] = useState(false);
-  
+  let [data, setData] = useState(initialData);
+
   async function onSearch(event) {
 
   };
@@ -30,14 +31,21 @@ export default function Home({ data }) {
 
     try {
       const [tagsResponse, saveFileResponse] = await Promise.all([generateTags(event), saveFile(event)]);
-
-      let tags = tagsResponse.result;
   
-      console.log("NEW FILE ID:");
+      console.log("CLIENT - NEW FILE ID:");
       console.log(saveFileResponse); 
   
-      console.log("TAGS at UPLOAD FX");
-      console.log(tagsResponse);
+      console.log("CLIENT - GENERATED TAGS:");
+      console.log(tagsResponse);   
+      
+      const response = await fetch("/api/files", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const newData = await response.json();
+      setData(newData.data);
     
   } catch (error) {
       console.error("CLIENT - An error occurred:", error);
@@ -68,10 +76,8 @@ export default function Home({ data }) {
       });
       if (response.ok) {
         setLoading(false);
-        const data = await response.json();
-        console.log("CLIENT - RESPONSE TO SAVE FILE API CALL WITHIN SAVE FILE METHOD:")
-        console.log(data.insertedId);
-        return data.insertedId;
+        const res = await response.json();
+        return res.insertedId;
       }else {
         setLoading(false);
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -104,11 +110,9 @@ export default function Home({ data }) {
           }),
     });
     if (response.ok) {
-      const data = await response.json();
-      console.log("CLIENT - GENERATED TAGS:");
-      console.log(data.result);
+      const res = await response.json();
       setLoading(false);
-      return data.result;
+      return res.result;
     } else {
       throw new Error(`Request failed with status ${response.status}`);
     }
