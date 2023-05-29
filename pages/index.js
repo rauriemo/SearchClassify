@@ -21,6 +21,9 @@ export async function getServerSideProps() {
 export default function Home({ initialData }) {
   let [loading, setLoading] = useState(false);
   let [data, setData] = useState(initialData);
+  
+  const [selectAll, setSelectAll] = useState(false);
+  const [checkedState, setCheckedState] = useState(new Array(data.length).fill(false));
 
   async function onSearch(event) {
 
@@ -49,7 +52,7 @@ export default function Home({ initialData }) {
         console.log("CLIENT - GENERATED TAGS:");
         console.log(tagsResponse);   
 
-        const saveFileResponse = await saveFile(event, tagsResponse);
+        const saveFileResponse = await saveFile(event, tagsResponse.sort());
         console.log("CLIENT - NEW FILE ID:");
         console.log(saveFileResponse); 
         const response = await fetch("/api/files", {
@@ -139,9 +142,30 @@ export default function Home({ initialData }) {
     }
   };
 
+  function handleSelectAllClick() {
+      setSelectAll(!selectAll);
+      setCheckedState(new Array(data.length).fill(!selectAll));
+  }
+
+  function handleSingleCheckboxChange(index, event) {
+    const updatedCheckedState = checkedState.map((item, idx) =>
+        idx === index ? !item : item
+    );
+
+    setCheckedState(updatedCheckedState);
+
+    // If every checkbox is checked, also set the selectAll state to true, otherwise false
+    setSelectAll(updatedCheckedState.every(item => item));
+  };
+
+
+  async function onDelete(event) {
+
+  };
+
   useEffect(() => {
-    //make api calls and update props section
-  }, []);
+    setCheckedState(new Array(data.length).fill(false));
+  }, [data]);
 
   return (
     <div className={styles.main}>
@@ -154,12 +178,13 @@ export default function Home({ initialData }) {
                 <img src="/upload.png"/>
                 <input type="file"  className={styles.uploadInput} onChange={onUpload}/>
               </label>
+              <img src="/delete.png" className={styles.deleteButton} onClick={onDelete} />
           </div>
           <div className={styles.fileExplorer}>
             <table>
                 <thead>
                     <tr>
-                        <th></th>
+                        <th><input type="checkbox" checked={selectAll} onChange={handleSelectAllClick}/></th>
                         <th>Name</th>
                         <th>Type</th>
                         <th>Tags</th>
@@ -168,7 +193,13 @@ export default function Home({ initialData }) {
                 <tbody>
                     {data.map((file, index) => (
                         <tr key={index}>
-                            <td><input type="checkbox" /></td>
+                            <td>
+                                <input 
+                                    type="checkbox" 
+                                    checked={checkedState[index]} 
+                                    onChange={(event) => handleSingleCheckboxChange(index, event)}
+                                />
+                            </td>
                             <td><a href={file.url} target="_blank" rel="noopener noreferrer">{file.title}</a></td>
                             <td className={styles.fileTypeColumn}>{file.type}</td>
                             <td className={styles.tagContainer}>

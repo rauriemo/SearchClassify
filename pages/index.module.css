@@ -19,7 +19,7 @@
   padding: 5px;
 }
 
-.uploadButton {
+.uploadButton, .deleteButton {
   border: none;
   outline: none;
   padding: 0;
@@ -30,9 +30,13 @@
   cursor: pointer;
 }
 
-.uploadButton img {
+.uploadButton img, .deleteButton img{
   width: 100%;
   height: 100%;
+}
+
+.deleteButton:hover {
+  cursor: pointer;
 }
 
 .uploadInput {
