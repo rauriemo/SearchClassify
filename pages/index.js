@@ -24,11 +24,25 @@ export default function Home({ initialData }) {
 
   async function onSearch(event) {
 
+    try {
+      const response = await fetch("/api/search", {
+        method: "POST",
+        body: JSON.stringify({ 
+          searchWords: event.target.value
+      }),
+    });
+    if(response.ok){
+      const res = await response.json();
+      setData(res.data);
+      console.log(res);
+    }
+    } catch (error) {
+      // handle at some point
+    }
   };
 
   async function onUpload(event) {
     event.preventDefault();
-    console.log("HERE");
     try {
       const tagsResponse = await generateTags(event);
       
@@ -142,31 +156,31 @@ export default function Home({ initialData }) {
               </label>
           </div>
           <div className={styles.fileExplorer}>
-    <table>
-        <thead>
-            <tr>
-                <th></th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Tags</th>
-            </tr>
-        </thead>
-        <tbody>
-            {data.map((file, index) => (
-                <tr key={index}>
-                    <td><input type="checkbox" /></td>
-                    <td><a href={file.url} target="_blank" rel="noopener noreferrer">{file.title}</a></td>
-                    <td className={styles.fileTypeColumn}>{file.type}</td>
-                    <td className={styles.tagContainer}>
-                        {file.tags.map((tag, tagIndex) => (
-                            <span key={tagIndex} className={styles.tagSpan}>{tag} </span>
-                        ))}
-                    </td>
-                </tr>
-            ))}
-        </tbody>
-    </table>
-</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Tags</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.map((file, index) => (
+                        <tr key={index}>
+                            <td><input type="checkbox" /></td>
+                            <td><a href={file.url} target="_blank" rel="noopener noreferrer">{file.title}</a></td>
+                            <td className={styles.fileTypeColumn}>{file.type}</td>
+                            <td className={styles.tagContainer}>
+                                {file.tags.map((tag, tagIndex) => (
+                                    <span key={tagIndex} className={styles.tagSpan}>{tag} </span>
+                                ))}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
     </div>
   );
 }

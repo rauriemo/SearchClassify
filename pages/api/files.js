@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   const client = await clientPromise;
   const db = client.db("SearchClassify")
 
-  console.log("SERVER - @FILESAVE");
+  console.log("SERVER - @FILE SAVE");
 
   switch (req.method) {
     case "POST":
