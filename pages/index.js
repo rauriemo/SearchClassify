@@ -175,16 +175,16 @@ export default function Home({ initialData }) {
           <div className={styles.topBar}>
               <input type="text" className={styles.searchBar} onChange={onSearch} placeholder="Search..."/>
               <label className={styles.uploadButton}>
-                <img src="/upload.png"/>
+                <img src="/upload.png" title="Upload New File"/>
                 <input type="file"  className={styles.uploadInput} onChange={onUpload}/>
               </label>
-              <img src="/delete.png" className={styles.deleteButton} onClick={onDelete} />
+              <img src="/delete.png" className={styles.deleteButton} onClick={onDelete} title="Delete Selected" />
           </div>
           <div className={styles.fileExplorer}>
             <table>
                 <thead>
                     <tr>
-                        <th><input type="checkbox" checked={selectAll} onChange={handleSelectAllClick}/></th>
+                        <th><input type="checkbox" className={styles.largerCheckbox} checked={selectAll} onChange={handleSelectAllClick}/></th>
                         <th>Name</th>
                         <th>Type</th>
                         <th>Tags</th>
@@ -196,7 +196,8 @@ export default function Home({ initialData }) {
                             <td>
                                 <input 
                                     type="checkbox" 
-                                    checked={checkedState[index]} 
+                                    checked={checkedState[index]}
+                                    className={styles.largerCheckbox} 
                                     onChange={(event) => handleSingleCheckboxChange(index, event)}
                                 />
                             </td>

@@ -110,3 +110,8 @@
 .fileTypeColumn{
   min-width: 100px;
 }
+
+.largerCheckbox {
+  transform: scale(1.5); /* Adjust scale as necessary */
+  margin: 10px; /* You may need to adjust margin to align it properly */
+}

@@ -37,10 +37,6 @@ export default async function handler(req, res) {
         let startIndex = str.indexOf('[');
         let newStr = str.substring(startIndex);
 
-        // if(str.startsWith("Answer:")) {
-        //   str = str.substring(8); // Remove "Answer: " from the string
-        // };
-
         console.log("SERVER- non parsed Tags generated:");
         console.log(newStr);
 
@@ -73,7 +69,6 @@ export default async function handler(req, res) {
 
 function generatePrompt(fileContent, title) {
     if(typeof fileContent === 'string'){
-      // return `After the semi-colon I will show you a text file and its title. I want you the Extract Key Words, Key Themes, and other relevant terms that are related to that text. Each term should not exceed 2 to 3 words and the array of terms should include 20 terms. The 20 terms should never contain repeated terms. Return the terms to me in an array of strings formatted exactly like this example: ["key term 1", "key term 2","key term 3", ... ,"key term 20"]. The elipsis represents the remaining terms. This is the title: ${title}, This is the text: ${fileContent}`;
       return `title: ${title}, This is the text: ${fileContent}
 
       Assignment:
