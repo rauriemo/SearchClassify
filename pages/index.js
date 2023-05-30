@@ -4,7 +4,7 @@ import styles from "./index.module.css";
 
 export async function getServerSideProps() {
   // remember to change address when hosted on some server
-  let res = await fetch("http://localhost:3000/api/files", {
+  let res = await fetch("https://search-repo-red.vercel.app/api/files", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
